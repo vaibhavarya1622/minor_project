@@ -2,6 +2,26 @@
 import numpy as np
 import cv2 as cv
 import os
+import pandas as pd
+from datetime import datetime
+from pandas import ExcelWriter
+from pandas import ExcelFile
+def markattendance(name):
+        with open('Attendance.csv','r+') as f:
+            mydata=f.readlines()
+            namelist=[]
+            for line in mydata:
+                entry=line.split(',')
+                namelist.append(entry[0])
+            now=datetime.now()
+            dfString=now.strftime('%H:%M:%S')
+            f.writelines(f'\n{name},{dfString}')
+        df=pd.read_csv('Attendance.csv')
+        writer = ExcelWriter('Attendance.xlsx')
+        df.to_excel(writer,'Sheet1',index=False)
+        writer.save()
+
+# markattendance('s7')
 def recognition(test_url):
         DIR='Resources/Faces/val'
         people=[]
@@ -15,7 +35,7 @@ def recognition(test_url):
         img = cv.imread(test_url)
 
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        cv.imshow('Person', gray)
+        # cv.imshow('Person', gray)
 
         # Detect the face in the image
         faces_rect = haar_cascade.detectMultiScale(gray, 1.1, 4)
@@ -25,10 +45,11 @@ def recognition(test_url):
 
             label, confidence = face_recognizer.predict(faces_roi)
             print(f'Label = {people[label]} with a confidence of {confidence}')
+            markattendance(people[label])
 
             cv.putText(img, str(people[label]), (20,20), cv.FONT_HERSHEY_COMPLEX, 1.0, (0,255,0), thickness=2)
             cv.rectangle(img, (x,y), (x+w,y+h), (0,255,0), thickness=2)
 
-        cv.imshow('Detected Face', img)
+        # cv.imshow('Detected Face', img)
 
-        cv.waitKey(0)
+        # cv.waitKey(0)

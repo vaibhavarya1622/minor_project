@@ -1,5 +1,6 @@
 from tkinter import *
 import train
+from PIL import Image,ImageTk
 import face_recognition
 from openpyxl import Workbook
 from openpyxl import load_workbook
@@ -10,16 +11,12 @@ def open_train():
 def open_detect():
     face_recognition.recognition(inputform.get())
 
-
-
-wb=Workbook()
-wb=load_workbook('Attendance.xlsx')
-ws=wb.active
-
-col_a=ws['A']
-col_b=ws['B']
-
 def get_name():
+    wb=Workbook()
+    wb=load_workbook('Attendance.xlsx')
+    ws=wb.active
+    col_a=ws['A']
+    col_b=ws['B']
     lista=''
     for (cell,cell2) in zip(col_a,col_b):
       lista=f'{lista +str(cell.value)+" "+str(cell2.value)}\n'
@@ -28,6 +25,9 @@ def get_name():
 root=Tk()
 root.geometry("500x800")
 root.title('Attendance System')
+image = Image.open("GUI/register.jpg")
+image=image.resize((580,600), Image.ANTIALIAS)
+photo = ImageTk.PhotoImage(image)
 labela=Label(root,text="ATTENDANCE SYSTEM")
 labela.pack(pady="20")
 labelentry=Label(root,text="enter file path")
